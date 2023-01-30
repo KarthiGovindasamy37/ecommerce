@@ -72,7 +72,8 @@ function TempPassPage() {
               </div>
 
               <div className="d-flex justify-content-center mt-5 mb-3">
-                {tempLoading ? (
+                { 
+                tempLoading ? 
                   <button
                     disabled
                     className="btn btn-primary signupbtn pb-1 pt-2"
@@ -83,7 +84,7 @@ function TempPassPage() {
                       role="status"
                     ></div>
                   </button>
-                ) : (
+                 : 
                   <button
                     disabled={!formik.isValid}
                     className="btn btn-primary signupbtn"
@@ -91,7 +92,7 @@ function TempPassPage() {
                   >
                     Submit
                   </button>
-                )}
+                }
               </div>
             </form>
           </div>
