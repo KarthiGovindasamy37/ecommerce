@@ -10,15 +10,14 @@ import * as cartActions from './Redux/Reducers/CartSlice'
 
 function ProductsPage() {
 
-    const {productsList,productLoading,filteredItems,searchList} = useSelector(state=>state.product)
+    const {productsList,productLoading,filteredItems,searchList,dropViewClose} = useSelector(state=>state.product)
     const {cartItems} = useSelector(state =>state.cart.cart)
     const dispatch = useDispatch()
 
-    const {productList,filter,searchProduct,setSearchList} = bindActionCreators(actionCreators,dispatch)
+    const {productList,filter,searchProduct,setSearchList,setDropViewClose} = bindActionCreators(actionCreators,dispatch)
     const {addToCart,removeFromCart} = bindActionCreators(cartActions,dispatch)
        
     let params = useParams()
-    let navigate = useNavigate()
     
     let [minValue,setMinValue] = useState(1)
     let [maxValue,setMaxValue] = useState(800)
@@ -28,6 +27,7 @@ function ProductsPage() {
 
     useEffect(()=>{
         productList(name)
+       if(dropViewClose) setDropViewClose(false)
     },[name])
 
     let value = {

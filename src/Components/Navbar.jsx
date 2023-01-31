@@ -11,11 +11,11 @@ import { logout } from '../Redux/Reducers/LoginSlice'
 function Navbar() {
 
   let {cartQuantity} = useSelector(state => state.cart.cart)
-  let {categoryList,dropView} = useSelector(state => state.product)
+  let {categoryList,dropView,dropViewClose} = useSelector(state => state.product)
   let {isLoggedOut} = useSelector(state => state.loginDetails)
 
   let dispatch = useDispatch()
-  const { loadCategories,setCategoryList,setDropView } = bindActionCreators(productActions,dispatch)
+  const { loadCategories,setCategoryList,setDropView,setDropViewClose } = bindActionCreators(productActions,dispatch)
 
   let navigate = useNavigate()
   let [searchValue,setSearchValue] = useState('')
@@ -79,11 +79,13 @@ function Navbar() {
               onChange={(e)=>setSearchValue(e.target.value)}
               />
               {
-                dropView ? categoryList.length > 0 ?
-              <div className="drop shadow-lg">
+                !dropViewClose ? categoryList.length > 0 ?
+              <div  className={` shadow-lg ${dropView ? `drop-dis`:`drop`}`}>
                 {
                   categoryList.map((e)=>{
-                    return <Link to={`/products/${e.collection}`} className='search-list list-item-div'>
+                    return <Link to={`/products/${e.collection}`} 
+                    onClick={()=>{setDropViewClose(true);setSearchValue("");setCategoryList()}} 
+                    className='search-list list-item-div' >
                       <FontAwesomeIcon icon={faMagnifyingGlass} className="magnify"/> <p className='ps-2 m-0'>{e.name}</p></Link>
                     
                   })
@@ -91,7 +93,7 @@ function Navbar() {
                 
               </div>
               : null
-              : null
+              :null              
              }
              {
               searchValue.length > 0 ?

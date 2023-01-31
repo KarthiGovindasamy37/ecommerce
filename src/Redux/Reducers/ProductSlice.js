@@ -16,7 +16,8 @@ const initialState = {
     ordersList:[],
     searchList:[],
     categoryList:[],
-    dropView:false
+    dropView:false,
+    dropViewClose:false
 }
 
 export const loadDeals = createAsyncThunk("product/loadDeals", async(obj,{rejectWithValue}) =>{
@@ -122,6 +123,9 @@ const productSlice = createSlice({
        setOrdersError : (state) =>{
         state.ordersError = false
        },
+       setDropViewClose : (state,{payload}) =>{
+        state.dropViewClose = payload
+       }
     },
     extraReducers : (handler) =>{
        handler.addCase(loadDeals.fulfilled,(state,{payload}) =>{
@@ -181,7 +185,7 @@ const productSlice = createSlice({
     }
 })
 
-export const {setSearchList,setDropView,setCategoryList,setOrdersError} = productSlice.actions
+export const {setSearchList,setDropView,setCategoryList,setOrdersError,setDropViewClose} = productSlice.actions
 
 export default productSlice.reducer
 

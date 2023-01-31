@@ -303,6 +303,15 @@ margin-left: 0;
     
   }
 }
+.drop-dis{
+  position: absolute;
+  height: max-content;
+  width: 250px;
+  background-color: pink;
+  border: 1px solid black;
+  border-radius: 5px;
+  z-index: 1;
+}
 .drop{
   position: absolute;
   height: max-content;
@@ -311,6 +320,10 @@ margin-left: 0;
   border: 1px solid black;
   border-radius: 5px;
   z-index: 1;
+  display: none;
+}
+.drop:hover{
+  display: block;
 }
 .input-field{
   width: 250px;
