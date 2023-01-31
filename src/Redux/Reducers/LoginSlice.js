@@ -1,4 +1,4 @@
-import { createSlice,createAsyncThunk,isRejectedWithValue } from "@reduxjs/toolkit";
+import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { env } from '../../Config'
@@ -33,7 +33,7 @@ forgotLoading:false
     }
 }
 
-export const signup = createAsyncThunk("login/signup",async(values) =>{
+export const signup = createAsyncThunk("login/signup",async(values,{rejectWithValue}) =>{
     try {
         delete values.confirmpass
         let user=await axios.post(`${env.api}/signup`,values)
@@ -42,6 +42,7 @@ export const signup = createAsyncThunk("login/signup",async(values) =>{
         }
       } catch (error) {
         toast.error(error.response.data.message,{toastId:Math.random()})
+        return rejectWithValue(error.response.status)
       }
 })
 
@@ -55,16 +56,16 @@ export const Login = createAsyncThunk("login/Login", async (values,{rejectWithVa
         email : user.data.user.email
     }
     window.localStorage.setItem("userDetails",JSON.stringify(userDetails))
+    toast.success("User logged in successfully",{toastId:Math.random()})
     return user.data.user
     }catch(error){
-        console.log(error);
         toast.error(error.response.data.message,{toastId:Math.random()})
-        isRejectedWithValue(error)
+        return rejectWithValue(error.response)
     }
     
 })
 
-export const forgotPass = createAsyncThunk("login/forgotPass",async(value) =>{
+export const forgotPass = createAsyncThunk("login/forgotPass",async(value,{rejectWithValue}) =>{
     try {
         let user=await axios.post(`${env.api}/forgot`,value)
         
@@ -74,11 +75,12 @@ export const forgotPass = createAsyncThunk("login/forgotPass",async(value) =>{
         }
       } catch (error) {
         toast.error(error.response.data.message,{toastId:Math.random()})
+        return rejectWithValue(error.response.status)
       }
     })
 
 
-export const tempPassword = createAsyncThunk("login/tempPassword",async(values) =>{
+export const tempPassword = createAsyncThunk("login/tempPassword",async(values,{rejectWithValue}) =>{
     try {
         
         values.password = values.password.trim();
@@ -89,12 +91,12 @@ export const tempPassword = createAsyncThunk("login/tempPassword",async(values) 
           return user.data
         }
       } catch (error) {
-        
         toast.error(error.response.data.message, { toastId: Math.random() });
+        return rejectWithValue(error.response.status)
       }
 })
 
-export const resetPass = createAsyncThunk("login/resetPass",async(values) =>{
+export const resetPass = createAsyncThunk("login/resetPass",async(values,{rejectWithValue}) =>{
     try {
         delete values.confirm
         let password=await axios.post(`${env.api}/resetpass`,values)
@@ -105,6 +107,7 @@ export const resetPass = createAsyncThunk("login/resetPass",async(values) =>{
         }
     } catch (error) {
         toast.error(error.response.data.message,{toastId:Math.random()})
+        return rejectWithValue(error.response.status)
     }
 })
 
@@ -118,6 +121,10 @@ const loginSlice = createSlice({
         state.user.email = ""
         state.isLoggedOut = true
         window.localStorage.removeItem("userDetails")
+        window.localStorage.removeItem("token")
+       },
+       setLoggedIn : (state) =>{
+        state.isLoggedin = false
        }
     },
     extraReducers: (builder) =>{
@@ -129,15 +136,11 @@ const loginSlice = createSlice({
         builder.addCase(Login.fulfilled,(state,action) =>{
             state.isLoggedin = true
             state.user = action.payload
-            state.isLoading = false
-            
+            state.isLoading = false            
         })
 
         builder.addCase(Login.rejected,(state,action) =>{
             state.isLoading = false
-            // state.message = action.payload
-            console.log(action);
-            console.log(action.payload);
         })
 
         builder.addCase(signup.pending,(state) =>{
@@ -183,5 +186,5 @@ const loginSlice = createSlice({
      }
 })
 
-export const {logout} = loginSlice.actions
+export const {logout,setLoggedIn} = loginSlice.actions
 export default loginSlice.reducer

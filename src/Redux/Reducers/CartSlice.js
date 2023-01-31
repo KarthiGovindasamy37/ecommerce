@@ -18,7 +18,7 @@ const initialState = window.localStorage.getItem("cart") ?
     buyLoading : false
 }
 
-export const buyProduct = createAsyncThunk("product/buyProduct",async(paymentDetails)=>{
+export const buyProduct = createAsyncThunk("product/buyProduct",async(paymentDetails,{rejectWithValue})=>{
   try {
         let {user,userName,item} = paymentDetails
         let payment=await axios.post(`${env.api}/razorpaypayment`,paymentDetails,{headers : {authorization : window.localStorage.getItem("token")}});
@@ -40,8 +40,7 @@ export const buyProduct = createAsyncThunk("product/buyProduct",async(paymentDet
               user,
               item
             }
-            await axios.post(`${env.api}/razorpay/verify`,values);
-            
+            await axios.post(`${env.api}/razorpay/verify`,values)          
         
           },
           prefill:{
@@ -67,6 +66,7 @@ export const buyProduct = createAsyncThunk("product/buyProduct",async(paymentDet
       
   } catch (error) {
       toast.error(error.response.data.message,{toastId:Math.random()})
+      return rejectWithValue(error.response.status)
   }
 })
 
@@ -78,7 +78,7 @@ const cartSlice = createSlice({
         let { cartItems } = state.cart
         if( ! cartItems.some((e)=>e._id === action.payload._id)){
           let item = {...action.payload,quantity:1,totalPrice:action.payload.price}
-            cartItems.push(item) 
+            cartItems.unshift(item) 
             state.cart.total = state.cart.total + Number(action.payload.price)
             state.cart.cartQuantity = state.cart.cartQuantity + 1
             let cart =state.cart
