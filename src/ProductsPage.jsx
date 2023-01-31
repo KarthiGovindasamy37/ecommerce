@@ -28,7 +28,7 @@ function ProductsPage() {
 
     useEffect(()=>{
         productList(name)
-    },[])
+    },[name])
 
     let value = {
         name,

@@ -40,7 +40,8 @@ li a{
   padding-top: 5px;
 }
 .log-btn:hover{
-  background-color: pink;
+  background-color: rgb(245, 105, 170);
+  border-color: red;
 }
 .cart-div{
   position: relative;
@@ -459,6 +460,7 @@ margin-left: 0;
   width: 100%;
   background-color: rgb(23, 228, 74);
   border-color: rgb(23, 228, 74);
+  border-radius: 27px;
 }
 .order-page-empty{
   margin-top: 86px;
@@ -486,6 +488,7 @@ margin-left: 0;
   background-color: rgb(235, 15, 151);
   border-color: rgb(248, 9, 121);
   color: white;
+  border-radius: 27px;
 }
 .order-total{
   float: right;

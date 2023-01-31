@@ -1,20 +1,29 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { loadOrders } from './Redux/Reducers/ProductSlice'
-import { Link } from 'react-router-dom'
+import { loadOrders,setOrdersError } from './Redux/Reducers/ProductSlice'
+import { Link,useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons'
 
 function OrdersPage() {
 
     const { email } = useSelector(state => state.loginDetails.user)
-    const { ordersList,ordersLoading } = useSelector(state => state.product)
+    const { ordersList,ordersLoading,ordersError } = useSelector(state => state.product)
     const dispatch = useDispatch()
+
+    let navigate = useNavigate()
 
     useEffect(()=>{
      dispatch(loadOrders(email))
     },[])
+
+    useEffect(()=>{
+      if(ordersError){
+         navigate("/login")
+         dispatch(setOrdersError())
+      }
+     },[ordersError])
  
     let total = ordersList.reduce((total,ele) => total += Number(ele.price),0)
     
@@ -41,7 +50,7 @@ function OrdersPage() {
         <div className="empty-order d-flex justify-content-center">
         <div className="empty-order-div"></div>       
         </div>
-        <h4 className='text-center text-muted'>It seems like you have not ordered anything. Grab a deal</h4>
+        <h4 className='text-center text-muted'>It seems like you have not ordered anything yet. Grab a deal</h4>
         <h4 className='text-center text-muted'>and make your first order now...!</h4>
         <div className='text-center pt-2'><Link to='/'><button className='offer-btn'>Diva Offers</button></Link></div>
       </div>

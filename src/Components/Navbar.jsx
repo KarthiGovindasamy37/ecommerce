@@ -27,7 +27,7 @@ function Navbar() {
    },[searchValue])
 
    useEffect(()=>{
-     if(isLoggedOut === true){
+     if(isLoggedOut){
       navigate("/")
       toast.info("User logged out",{toastId:Math.random()})
      }
@@ -118,7 +118,7 @@ function Navbar() {
                  <h6 className='text-dark ps-2 pt-2'>New customer? <Link to="/signup" className=" link signup-drop ps-1">Sign Up</Link></h6>
                  <hr className='mb-0'/>
                  <Link to='/orders' className='link'><div className="order pt-1 pb-1 ps-2">Your Orders </div></Link>
-                 <div onClick={()=>{dispatch(logout())}} className="logout-div text-danger">Logout</div>
+                 <div onClick={()=>{dispatch(logout())}} className="logout-div text-danger">Sign out</div>
                 
                 </div>
                 </div>

@@ -12,13 +12,15 @@ function LoginPage() {
   
   let dispatch = useDispatch()
 
-  let {Login } = bindActionCreators(actionCreator,dispatch)
+  let {Login,setLoggedIn } = bindActionCreators(actionCreator,dispatch)
 
   let navigate = useNavigate()
 
   useEffect(()=>{
-  if(isLoggedin) navigate('/')
-  
+  if(isLoggedin) {
+    navigate('/')
+    setLoggedIn()
+  }  
   },[isLoggedin])
   
 
