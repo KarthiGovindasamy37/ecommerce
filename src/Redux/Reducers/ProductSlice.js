@@ -8,12 +8,9 @@ const initialState = {
     divaItems:[],
     productsList:[],
     productLoading:false,
-    productError : false,
     filteredItems:[],
-    filterError : false,
     viewLoading:false,
     viewItem:{},
-    viewError : false,
     ordersLoading:false,
     ordersError:false,
     ordersList:[],
@@ -142,7 +139,6 @@ const productSlice = createSlice({
        })
        handler.addCase(productList.rejected,(state) =>{
         state.productLoading = false
-        state.productError = true
        })
        handler.addCase(filter.pending,(state) =>{
         state.productLoading = true
@@ -153,7 +149,6 @@ const productSlice = createSlice({
        })
        handler.addCase(filter.rejected,(state) =>{
         state.productLoading = false
-        state.filterError = true
        })
        handler.addCase(viewProduct.pending,(state) =>{
         state.viewLoading = true
@@ -164,7 +159,6 @@ const productSlice = createSlice({
        })
        handler.addCase(viewProduct.rejected,(state) =>{
         state.viewLoading = false
-        state.viewError = true
        })
        handler.addCase(loadOrders.pending,(state)=>{
         state.ordersLoading = true
