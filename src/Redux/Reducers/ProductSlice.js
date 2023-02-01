@@ -17,7 +17,11 @@ const initialState = {
     searchList:[],
     categoryList:[],
     dropView:false,
-    dropViewClose:false
+    dropViewClose:false,
+    filterMinValue:1,
+    filterMaxValue:800,
+    productSearchValue:"",
+    navSearchValue:""
 }
 
 export const loadDeals = createAsyncThunk("product/loadDeals", async(obj,{rejectWithValue}) =>{
@@ -52,11 +56,19 @@ export const productList = createAsyncThunk("product/productList", async(categor
     }
 })
 
-export const filter = createAsyncThunk("product/filter", async (values,{rejectWithValue}) =>{
+export const filter = createAsyncThunk("product/filter", async (value,{getState,rejectWithValue}) =>{
 try {
-    let filteredItems = await axios.get(`${env.api}/filter/${values.name}?min=${values.minValue}&max=${values.maxValue}`)
+    const {filterMinValue,filterMaxValue} = getState().product
+    
+     if ( filterMinValue !== 1 || filterMaxValue !== 800){
+        console.log(filterMinValue,filterMaxValue);
+    let filteredItems = await axios.get(`${env.api}/filter/${value}?min=${filterMinValue}&max=${filterMaxValue}`)
     return filteredItems.data
-} catch (error) {
+    }else{
+        toast.info("Please select atlest one value",{toastId:Math.random()})
+        return rejectWithValue()
+     }
+} catch (error) {console.log(error);
     toast.error(error.response.data.message,{toastId:Math.random()})
     return rejectWithValue(error.response.status)
 }
@@ -84,12 +96,15 @@ export const loadOrders = createAsyncThunk("product/loadOrders",async(email,{rej
     }
 })
 
-export const searchProduct = createAsyncThunk("product/searchProduct",async(value,{rejectWithValue})=>{
+export const searchProduct = createAsyncThunk("product/searchProduct",async(value,{getState,rejectWithValue})=>{
     try {
-        let products = await axios.get(`${env.api}/search/${value.name}/${value.searchValue}`)
+        const {productSearchValue} = getState().product
+        
+        let products = await axios.get(`${env.api}/search/${value}/${productSearchValue}`)
 
         return products.data
     } catch (error) {
+        console.log(error);
         toast.error(error.response.data.message,{toastId:Math.random()})
         return rejectWithValue(error.response.status)
     }
@@ -125,6 +140,18 @@ const productSlice = createSlice({
        },
        setDropViewClose : (state,{payload}) =>{
         state.dropViewClose = payload
+       },
+       setFilterMinValue : (state,{payload}) =>{
+        state.filterMinValue = payload
+       },
+       setFilterMaxValue : (state,{payload}) =>{
+        state.filterMaxValue = payload
+       },
+       setFilteredItems : (state) =>{
+        state.filteredItems = []
+       },
+       setProductSearchValue : (state,{payload}) =>{
+        state.productSearchValue = payload
        }
     },
     extraReducers : (handler) =>{
@@ -148,7 +175,7 @@ const productSlice = createSlice({
         state.productLoading = true
        })
        handler.addCase(filter.fulfilled,(state,{payload}) =>{
-        state.productsList = payload
+        state.filteredItems = payload
         state.productLoading = false
        })
        handler.addCase(filter.rejected,(state) =>{
@@ -175,6 +202,9 @@ const productSlice = createSlice({
         state.ordersLoading = false
         if(payload === 440 || payload === 401) state.ordersError = true
        })
+       handler.addCase(searchProduct.pending,(state) =>{
+        state.filteredItems = []
+       })
        handler.addCase(searchProduct.fulfilled,(state,{payload})=>{
         state.searchList = payload
        })
@@ -185,7 +215,8 @@ const productSlice = createSlice({
     }
 })
 
-export const {setSearchList,setDropView,setCategoryList,setOrdersError,setDropViewClose} = productSlice.actions
+export const {setSearchList,setDropView,setCategoryList,setOrdersError,
+    setDropViewClose,setFilterMinValue,setFilterMaxValue,setFilteredItems,setProductSearchValue} = productSlice.actions
 
 export default productSlice.reducer
 

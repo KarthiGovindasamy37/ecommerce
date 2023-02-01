@@ -6,10 +6,12 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import Carousel from './Components/Carousel'
 import * as productActions from './Redux/Reducers/ProductSlice'
+import { addToCart,removeFromCart } from './Redux/Reducers/CartSlice'
 
 function HomePage() {
 
     const {dealsItems,divaItems} = useSelector(state =>state.product)
+    const {cartItems} = useSelector(state => state.cart.cart)
     const dispatch = useDispatch()
 
     const { loadDeals,loadDiva } = bindActionCreators(productActions,dispatch)
@@ -19,6 +21,14 @@ function HomePage() {
         loadDeals()
         loadDiva()
     },[])
+
+    const favouriteToCart = (ele) =>{
+        if(cartItems.some((e => e._id === ele._id))){
+            dispatch(removeFromCart(ele))
+        }else{
+            dispatch(addToCart(ele))
+        }
+    }
 
 
     let loadingImg=[
@@ -71,7 +81,7 @@ function HomePage() {
                     <div className="card">
                     <Link to={`/view/dealsBlock/${ele._id}`} className='link '><img src={ele.image} alt="Hot deals" className='deals-div1-cardimg' /></Link>
                     <div className="cart-heart-div">
-                    <FontAwesomeIcon icon={faHeart}  className='cart-heart cart-heart-default'/>
+                    <FontAwesomeIcon onClick={()=>favouriteToCart(ele)} icon={faHeart}  className={`cart-heart ${cartItems.some((e => e._id === ele._id)) ?`cart-heart-selected` :`cart-heart-default`} `}/>
                     </div>
                       <div className="card-title text-dark">
                         <h4 className='title-over'>{ele.name}</h4>
@@ -118,7 +128,7 @@ function HomePage() {
                     <div className="card">
                     <Link to={`/view/onlyBlock/${ele._id}`} className='link'><img src={ele.image} alt="Hot deals" className='deals-div1-cardimg' /></Link>
                     <div className="cart-heart-div">
-                    <FontAwesomeIcon icon={faHeart}  className='cart-heart cart-heart-default'/>
+                    <FontAwesomeIcon onClick={()=>favouriteToCart(ele)} icon={faHeart}  className={`cart-heart ${cartItems.some((e => e._id === ele._id)) ?`cart-heart-selected` :`cart-heart-default`} `}/>
                     </div>
                     <div className="card-title  text-dark">
                         <h5 className='title-over'>{ele.name}</h5>

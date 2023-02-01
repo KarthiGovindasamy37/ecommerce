@@ -10,50 +10,30 @@ import * as cartActions from './Redux/Reducers/CartSlice'
 
 function ProductsPage() {
 
-    const {productsList,productLoading,filteredItems,searchList,dropViewClose} = useSelector(state=>state.product)
+    const {productsList,productLoading,filteredItems,searchList,
+        dropViewClose,productSearchValue} = useSelector(state=>state.product)
     const {cartItems} = useSelector(state =>state.cart.cart)
     const dispatch = useDispatch()
 
-    const {productList,filter,searchProduct,setSearchList,setDropViewClose} = bindActionCreators(actionCreators,dispatch)
+    const {productList,filter,searchProduct,setSearchList,setDropViewClose,
+           setFilterMinValue,setFilterMaxValue,setFilteredItems,setProductSearchValue} = bindActionCreators(actionCreators,dispatch)
     const {addToCart,removeFromCart} = bindActionCreators(cartActions,dispatch)
        
     let params = useParams()
-    
-    let [minValue,setMinValue] = useState(1)
-    let [maxValue,setMaxValue] = useState(800)
-    let {name} = params
-    let [searchValue,setSearchValue] = useState("")
-    
 
+    let {name} = params
+    
     useEffect(()=>{
         productList(name)
+        if(filteredItems.length > 0) setFilteredItems()
        if(dropViewClose) setDropViewClose(false)
     },[name])
 
-    let value = {
-        name,
-        searchValue
-        
-    }
 
     useEffect(()=>{
-        if(searchValue.length > 0) searchProduct(value)
-    },[searchValue])
+        if(productSearchValue.length > 0) searchProduct(name)
+    },[productSearchValue])
 
-    
-    let values = {
-        minValue,
-        maxValue,
-        name
-    }
-
-    const filterProduct =()=>{
-        if ( minValue !== 1 || maxValue !== 800){
-            filter(values)
-        }else{
-            toast.info("Please select atlest one value",{toastId:Math.random()})
-         }
-        }
 
     const favouriteToCart = (ele) =>{
         if(cartItems.some((e => e._id === ele._id))){
@@ -86,7 +66,7 @@ function ProductsPage() {
         <div className='d-flex'>
             <div className="select-div ms-4">
         <select class="form-select"
-        onChange={(e) => setMinValue(e.target.value)}
+        onChange={(e) => setFilterMinValue(Number(e.target.value))}
         >
          <option selected>Min</option>
          <option value="1">1</option>
@@ -102,7 +82,7 @@ function ProductsPage() {
         <div className='align-self-center ms-3'>to</div>
         <div className="select-div ms-3">
         <select class="form-select"
-        onChange={(e) => setMaxValue(e.target.value)}
+        onChange={(e) => setFilterMaxValue(Number(e.target.value))}
         >
          <option selected>Max</option>
          <option value="100">100</option>
@@ -115,15 +95,15 @@ function ProductsPage() {
          <option value="800">800+</option>
         </select>
         </div>
-         <button onClick={filterProduct} className='btn btn-success ms-2'>Filter</button>
+         <button onClick={()=>filter(name)} className='btn btn-success ms-2'>Filter</button>
          </div>
          <div className="product-search pe-3">
             <input type="text" className='product-search-inp form-control' placeholder='Search by name' 
-            onChange={(e)=>setSearchValue(e.target.value)}
-            value={searchValue}/>
+            onChange={(e)=>setProductSearchValue(e.target.value)}
+            value={productSearchValue}/>
             {
-                searchValue.length > 0 ?
-            <h5 onClick={()=>{setSearchValue("");setSearchList()}} className='search-x'>x</h5>
+                productSearchValue.length > 0 ?
+            <h5 onClick={()=>{setProductSearchValue("");setSearchList()}} className='search-x'>x</h5>
             : null
             } 
          </div>
@@ -138,7 +118,7 @@ function ProductsPage() {
                     <div className="card">
                     <Link to={`/view/${params.name}/${ele._id}`} className='link'><img src={ele.image} alt="Hot deals" className='deals-div1-cardimg' /></Link>
                     <div className="cart-heart-div">
-                    <FontAwesomeIcon icon={faHeart}  className='cart-heart cart-heart-default'/>
+                    <FontAwesomeIcon onClick={()=>favouriteToCart(ele)} icon={faHeart}  className={`cart-heart ${cartItems.some((e => e._id === ele._id)) ?`cart-heart-selected` :`cart-heart-default`} `}/>
                     </div>
                     <div className="card-title">
                         <h4 className='title-over mb-0 pb-0'>{ele.name}</h4>
@@ -158,7 +138,7 @@ function ProductsPage() {
                     <div className="card">
                     <Link to={`/view/${params.name}/${ele._id}`} className='link'><img src={ele.image} alt="Hot deals" className='deals-div1-cardimg' /></Link>
                     <div className="cart-heart-div">
-                    <FontAwesomeIcon icon={faHeart}  className='cart-heart cart-heart-default'/>
+                    <FontAwesomeIcon onClick={()=>favouriteToCart(ele)} icon={faHeart}  className={`cart-heart ${cartItems.some((e => e._id === ele._id)) ?`cart-heart-selected` :`cart-heart-default`} `}/>
                     </div>
                     <div className="card-title">
                         <h4 className='title-over mb-0 pb-0'>{ele.name}</h4>
