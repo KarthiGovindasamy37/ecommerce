@@ -11,20 +11,20 @@ import { logout } from '../Redux/Reducers/LoginSlice'
 function Navbar() {
 
   let {cartQuantity} = useSelector(state => state.cart.cart)
-  let {categoryList,dropView,dropViewClose} = useSelector(state => state.product)
+  let {categoryList,dropView,dropViewClose,navSearchValue,navSearchAlert} = useSelector(state => state.product)
   let {isLoggedOut} = useSelector(state => state.loginDetails)
 
   let dispatch = useDispatch()
-  const { loadCategories,setCategoryList,setDropView,setDropViewClose } = bindActionCreators(productActions,dispatch)
+  const { loadCategories,navSearchClear,setDropView,setDropViewClose,
+    setNavSearchValue,setNavSearchAlert } = bindActionCreators(productActions,dispatch)
 
   let navigate = useNavigate()
-  let [searchValue,setSearchValue] = useState('')
 
   useEffect(() => {
-    if(searchValue.length > 0){
-     loadCategories(searchValue)
+    if(navSearchValue.length > 0){
+     loadCategories(navSearchValue)
     }
-   },[searchValue])
+   },[navSearchValue])
 
    useEffect(()=>{
      if(isLoggedOut){
@@ -32,6 +32,34 @@ function Navbar() {
       toast.info("User logged out",{toastId:Math.random()})
      }
    },[isLoggedOut])
+
+   const validateSearchValue = (value) =>{
+    if(value.length > 0){
+     let code = value.charCodeAt(value.length - 1)
+     if(code === 32){
+         let regexp = new RegExp(/^[a-z]( ?[a-z] ?)*$/,"i")
+ 
+         if(regexp.test(value)){
+             setNavSearchValue(value)
+             setNavSearchAlert(false)
+         }
+         
+     }else{
+         let regexp = new RegExp(/^[a-z]( ?[a-z] ?)*$/,"i")
+         if(regexp.test(value)){
+             setNavSearchValue(value)
+             setNavSearchAlert(false)
+
+         }else{
+             setNavSearchAlert(true)
+           
+         }
+     }
+ 
+ }else{
+  setNavSearchValue("")
+ }
+}
   
   return (
     <div>
@@ -73,18 +101,23 @@ function Navbar() {
               <li className="nav-item ms-lg-5 ps-lg-5 mt-2 mt-lg-0">
                 <div className="input-field">
               <input type="text" className='search-field' placeholder="Search for product"
-              value={searchValue}
+              value={navSearchValue}
               onFocus={setDropView} 
-              onBlur={setDropView}
-              onChange={(e)=>setSearchValue(e.target.value)}
+              onBlur={() =>{setDropView();setNavSearchAlert(false)}}
+              onChange={(e)=>validateSearchValue(e.target.value)}
               />
+              {
+                navSearchAlert ?
+                <div className='nav-search-error'>Characters only allowed</div>
+                : null
+              }
               {
                 !dropViewClose ? categoryList.length > 0 ?
               <div  className={` shadow-lg ${dropView ? `drop-dis`:`drop`}`}>
                 {
                   categoryList.map((e)=>{
                     return <Link to={`/products/${e.collection}`} 
-                    onClick={()=>{setDropViewClose(true);setSearchValue("");setCategoryList()}} 
+                    onClick={()=>{setDropViewClose(true);setNavSearchValue("");setNavSearchAlert(false)}} 
                     className='search-list list-item-div' >
                       <FontAwesomeIcon icon={faMagnifyingGlass} className="magnify"/> <p className='ps-2 m-0'>{e.name}</p></Link>
                     
@@ -96,9 +129,9 @@ function Navbar() {
               :null              
              }
              {
-              searchValue.length > 0 ?
+              navSearchValue.length > 0 ?
               <FontAwesomeIcon icon={faCircleXmark} className="xmark" 
-              onClick={()=>{setSearchValue("");setCategoryList()}}/>
+              onClick={navSearchClear}/>
               : null
              }
               

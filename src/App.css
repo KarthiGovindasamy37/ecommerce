@@ -515,6 +515,11 @@ margin-left: 0;
 .product-search-inp{
   height: 35px;  
 }
+.product-search-alert{
+  color: blueviolet;
+  position: absolute;
+  font-size: small;
+}
 @media only screen and (min-width : 650px){
   .filter-div{
     display: flex;
@@ -556,4 +561,16 @@ margin-left: 0;
 }
 .cart-heart:hover{
    cursor: pointer;
+}
+.filter-page-div{
+  height: 400px;
+  width: 100%;
+  background-color: pink;
+}
+.nav-search-error{
+  color: red;
+  font-size: small;
+  position: absolute;
+  /* left: 0px;
+  top: 33px; */
 }

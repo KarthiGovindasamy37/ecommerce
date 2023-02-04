@@ -8,6 +8,7 @@ const initialState = {
     divaItems:[],
     productsList:[],
     productLoading:false,
+    productError:false,
     filteredItems:[],
     viewLoading:false,
     viewItem:{},
@@ -20,8 +21,15 @@ const initialState = {
     dropViewClose:false,
     filterMinValue:1,
     filterMaxValue:800,
+    filterBlock:false,
+    filterLoading:false,
+    filterError:false,
     productSearchValue:"",
-    navSearchValue:""
+    productSearchAlert:false,
+    searchBlock:false,
+    searchLoading:false,
+    navSearchValue:"",
+    navSearchAlert:false
 }
 
 export const loadDeals = createAsyncThunk("product/loadDeals", async(obj,{rejectWithValue}) =>{
@@ -126,14 +134,19 @@ const productSlice = createSlice({
     name : "product",
     initialState,
     reducers : {
-       setSearchList : (state) =>{
-        state.searchList = []
+        productSearchClear : (state) =>{
+        state.productSearchValue = ""
+        state.productSearchAlert = false
+        state.filterBlock = false
+        state.searchBlock = false
        },
        setDropView : (state) =>{
         state.dropView = !state.dropView
        },
-       setCategoryList : (state) =>{
+       navSearchClear : (state) =>{
         state.categoryList = []
+        state.navSearchValue =""
+        state.navSearchAlert = false
        },
        setOrdersError : (state) =>{
         state.ordersError = false
@@ -147,11 +160,17 @@ const productSlice = createSlice({
        setFilterMaxValue : (state,{payload}) =>{
         state.filterMaxValue = payload
        },
-       setFilteredItems : (state) =>{
-        state.filteredItems = []
-       },
        setProductSearchValue : (state,{payload}) =>{
         state.productSearchValue = payload
+       },
+       setProductSearchAlert : (state,{payload}) =>{
+        state.productSearchAlert = payload
+       },
+       setNavSearchValue : (state,{payload}) =>{
+        state.navSearchValue = payload
+       },
+       setNavSearchAlert : (state,{payload}) =>{
+        state.navSearchAlert = payload
        }
     },
     extraReducers : (handler) =>{
@@ -163,6 +182,9 @@ const productSlice = createSlice({
        })
        handler.addCase(productList.pending,(state) =>{
         state.productLoading = true
+        state.filterBlock = false
+        state.searchBlock = false
+        state.productError = false
        })
        handler.addCase(productList.fulfilled,(state,{payload}) =>{
         state.productsList = payload
@@ -170,16 +192,20 @@ const productSlice = createSlice({
        })
        handler.addCase(productList.rejected,(state) =>{
         state.productLoading = false
+        state.productError = true
        })
        handler.addCase(filter.pending,(state) =>{
-        state.productLoading = true
+        state.filterBlock = true
+        state.filterLoading = true
+        state.filterError = false
        })
        handler.addCase(filter.fulfilled,(state,{payload}) =>{
         state.filteredItems = payload
-        state.productLoading = false
+        state.filterLoading = false
        })
        handler.addCase(filter.rejected,(state) =>{
-        state.productLoading = false
+        state.filterLoading = false
+        state.filterError = true
        })
        handler.addCase(viewProduct.pending,(state) =>{
         state.viewLoading = true
@@ -203,10 +229,18 @@ const productSlice = createSlice({
         if(payload === 440 || payload === 401) state.ordersError = true
        })
        handler.addCase(searchProduct.pending,(state) =>{
-        state.filteredItems = []
+        state.filterBlock = false
+        state.searchBlock = true
+        state.searchLoading = true
+        state.searchError = false
        })
        handler.addCase(searchProduct.fulfilled,(state,{payload})=>{
+        state.searchLoading = false
         state.searchList = payload
+       })
+       handler.addCase(searchProduct.rejected,(state) =>{
+        state.searchLoading = false
+        state.searchError = true
        })
        handler.addCase(loadCategories.fulfilled,(state,{payload}) =>{
         state.categoryList = payload
@@ -215,8 +249,10 @@ const productSlice = createSlice({
     }
 })
 
-export const {setSearchList,setDropView,setCategoryList,setOrdersError,
-    setDropViewClose,setFilterMinValue,setFilterMaxValue,setFilteredItems,setProductSearchValue} = productSlice.actions
+export const {productSearchClear,setDropView,navSearchClear,setOrdersError,
+    setDropViewClose,setFilterMinValue,setFilterMaxValue,
+    setProductSearchValue,setProductSearchAlert,setNavSearchValue,
+    setNavSearchAlert} = productSlice.actions
 
 export default productSlice.reducer
 
