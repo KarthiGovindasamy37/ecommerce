@@ -15,7 +15,7 @@ function OrdersPage() {
     let navigate = useNavigate()
 
     useEffect(()=>{
-     dispatch(loadOrders(email))
+      dispatch(loadOrders(email))
     },[])
 
     useEffect(()=>{

@@ -117,11 +117,15 @@ const loginSlice = createSlice({
     initialState,
     reducers : {
        logout : (state) =>{
+        if(window.localStorage.getItem("userDetails")){
         state.user.userName = ""
         state.user.email = ""
         state.isLoggedOut = true
         window.localStorage.removeItem("userDetails")
         window.localStorage.removeItem("token")
+        }else{
+            toast.error("No user has logged in",{toastId:Math.random()})
+        }
        },
        setLoggedIn : (state) =>{
         state.isLoggedin = false
