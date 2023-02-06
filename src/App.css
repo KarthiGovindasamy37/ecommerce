@@ -310,7 +310,6 @@ margin-left: 0;
   background-color: pink;
   border: 1px solid black;
   border-radius: 5px;
-  z-index: 1;
 }
 .drop{
   position: absolute;
@@ -571,6 +570,7 @@ margin-left: 0;
   color: red;
   font-size: small;
   position: absolute;
-  /* left: 0px;
-  top: 33px; */
+}
+.drop-top{
+  top: 50px;
 }

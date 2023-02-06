@@ -113,7 +113,7 @@ function Navbar() {
               }
               {
                 !dropViewClose ? categoryList.length > 0 ?
-              <div  className={` shadow-lg ${dropView ? `drop-dis`:`drop`}`}>
+              <div  className={` shadow-lg ${dropView ? `drop-dis`:`drop`} ${navSearchAlert ? `drop-top` :``}`}>
                 {
                   categoryList.map((e)=>{
                     return <Link to={`/products/${e.collection}`} 
