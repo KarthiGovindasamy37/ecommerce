@@ -28,6 +28,10 @@ function ConfirmPassPage() {
             if(values.email===""){
                 errors.email="Please enter email id"
             }
+            if(values.email.length > 0){
+              let regex = new RegExp(/^[a-zA-Z0-9_]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/)
+              if(!regex.test(values.email)) errors.email = "Please enter a valid email address"
+          }
             if(values.password===""){
                 errors.password="Please enter password"
             }
