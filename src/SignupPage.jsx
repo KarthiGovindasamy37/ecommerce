@@ -37,8 +37,9 @@ function SignupPage() {
         if(values.password===""){
           errors.password="Please enter password"
         }
-        if(values.password.length > 0 && values.password.length < 5){
-          errors.password="Password must be atleast 5 characters long"
+        if(values.password.length > 0){
+          let regex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[\w!@#$%^&*]{5}$/)
+        if(!regex.test(values.password)) errors.password = "Password must contain atleast one uppercase,lowercase,special character and should be 5 characters long"
         }
         if(values.confirmpass===""){
           errors.confirmpass="Please re enter password"
