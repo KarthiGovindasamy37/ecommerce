@@ -34,6 +34,10 @@ function SignupPage() {
         if(values.email===""){
           errors.email="Please enter email id"
         }
+        if(values.email.length > 0){
+          let regex = new RegExp(/^[a-zA-Z0-9_]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/)
+          if(!regex.test(values.email)) errors.email = "Please enter a valid email address"
+        }
         if(values.password===""){
           errors.password="Please enter password"
         }
@@ -71,7 +75,7 @@ function SignupPage() {
               </div>
             <div className="mb-3">
                 <label for="email" className="form-label">Email ID</label>
-                <input type="email" className="form-control" id="email"
+                <input type="text" className="form-control" id="email"
                 name="email"
                 onChange={formik.handleChange}
                 value={formik.values.email} />
