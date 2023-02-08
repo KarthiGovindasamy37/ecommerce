@@ -37,7 +37,7 @@ function ConfirmPassPage() {
             }
             if(values.password.length > 0){
               let regex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[\w!@#$%^&*]{5,15}$/)
-            if(!regex.test(values.password)) errors.password = "Password must contain atleast one uppercase,lowercase,special character and minimum 5,maximum 15 characters long"
+            if(!regex.test(values.password)) errors.password = "Password must contain atleast one uppercase, lowercase, special character and minimum 5, maximum 15 characters long"
             }
             if(values.confirm===""){
                 errors.confirm="Please re enter password"
