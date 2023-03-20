@@ -35,27 +35,20 @@ function Navbar() {
 
    const validateSearchValue = (value) =>{
     if(value.length > 0){
-     let code = value.charCodeAt(value.length - 1)
-     if(code === 32){
-         let regexp = new RegExp(/^[a-z]( ?[a-z] ?)*$/,"i")
- 
-         if(regexp.test(value)){
-             setNavSearchValue(value)
-             setNavSearchAlert(false)
-         }
-         
-     }else{
-         let regexp = new RegExp(/^[a-z]( ?[a-z] ?)*$/,"i")
-         if(regexp.test(value)){
-             setNavSearchValue(value)
-             setNavSearchAlert(false)
+      if(value.charCodeAt(0) === 32){
 
-         }else{
-             setNavSearchAlert(true)
-           
-         }
+      }else if(value.charCodeAt(value.length - 1) === 32 && value.charCodeAt(value.length - 2) === 32){
+
+     }else{
+      let regexp = new RegExp(/^[a-z\s]*$/,"i")
+
+      if(regexp.test(value)){
+        setNavSearchValue(value)
+        setNavSearchAlert(false)
+      }else{
+        setNavSearchAlert(true)
+      }
      }
- 
  }else{
   setNavSearchValue("")
  }
@@ -102,7 +95,7 @@ function Navbar() {
                 <div className="input-field">
               <input type="text" className='search-field' placeholder="Search for product"
               value={navSearchValue}
-              onFocus={setDropView} 
+              onFocus={()=>{setDropView()}} 
               onBlur={() =>{setDropView();setNavSearchAlert(false)}}
               onChange={(e)=>validateSearchValue(e.target.value)}
               />
@@ -131,7 +124,7 @@ function Navbar() {
              {
               navSearchValue.length > 0 ?
               <FontAwesomeIcon icon={faCircleXmark} className="xmark" 
-              onClick={navSearchClear}/>
+              onClick={()=>{navSearchClear()}}/>
               : null
              }
               
