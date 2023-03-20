@@ -138,6 +138,7 @@ const loginSlice = createSlice({
         })
 
         builder.addCase(Login.fulfilled,(state,action) =>{
+            state.isLoggedOut = false
             state.isLoggedin = true
             state.user = action.payload
             state.isLoading = false            

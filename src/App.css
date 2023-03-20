@@ -528,11 +528,21 @@ margin-left: 0;
     padding-top: 0;
   }
 }
+@media only screen and (max-width : 649px){
+  .search-x{
+    position: absolute;
+    top : 13px;
+    right: 30px;
+    color: blue; 
+  }
+}
+@media only screen and (min-width : 650px){
 .search-x{
   position: absolute;
   top : 3px;
   right: 30px;
   color: blue; 
+}
 }
 .search-x:hover{
   cursor: pointer;
@@ -570,7 +580,19 @@ margin-left: 0;
   color: red;
   font-size: small;
   position: absolute;
+  z-index: 1;
 }
 .drop-top{
   top: 50px;
+}
+@media only screen and (max-width: 992px){
+  .drop-dis{
+  position: absolute;
+  height: max-content;
+  width: 250px;
+  background-color: pink;
+  border: 1px solid black;
+  border-radius: 5px;
+   z-index: 1;
+  }
 }

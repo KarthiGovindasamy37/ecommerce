@@ -26,6 +26,8 @@ const initialState = {
     filterError:false,
     productSearchValue:"",
     productSearchAlert:false,
+    searchFilteredItems:[],
+    searchFilterBlock:false,
     searchBlock:false,
     searchLoading:false,
     navSearchValue:"",
@@ -67,16 +69,11 @@ export const productList = createAsyncThunk("product/productList", async(categor
 export const filter = createAsyncThunk("product/filter", async (value,{getState,rejectWithValue}) =>{
 try {
     const {filterMinValue,filterMaxValue} = getState().product
-    
-     if ( filterMinValue !== 1 || filterMaxValue !== 800){
-        console.log(filterMinValue,filterMaxValue);
+
     let filteredItems = await axios.get(`${env.api}/filter/${value}?min=${filterMinValue}&max=${filterMaxValue}`)
     return filteredItems.data
-    }else{
-        toast.info("Please select atlest one value",{toastId:Math.random()})
-        return rejectWithValue()
-     }
-} catch (error) {console.log(error);
+    
+} catch (error) {
     toast.error(error.response.data.message,{toastId:Math.random()})
     return rejectWithValue(error.response.status)
 }
@@ -96,7 +93,7 @@ try {
 export const loadOrders = createAsyncThunk("product/loadOrders",async(email,{rejectWithValue}) =>{
     try {
         let user = await axios.get(`${env.api}/users?email=${email}`,{headers :{Authorization : window.localStorage.getItem("token")}})
-        
+       
          return user.data
     } catch (error) {
         toast.error(error.response.data.message,{toastId:Math.random()})
@@ -112,7 +109,7 @@ export const searchProduct = createAsyncThunk("product/searchProduct",async(valu
 
         return products.data
     } catch (error) {
-        console.log(error);
+       
         toast.error(error.response.data.message,{toastId:Math.random()})
         return rejectWithValue(error.response.status)
     }
@@ -139,6 +136,8 @@ const productSlice = createSlice({
         state.productSearchAlert = false
         state.filterBlock = false
         state.searchBlock = false
+        state.searchList = []
+        state.searchFilterBlock = false
        },
        setDropView : (state) =>{
         state.dropView = !state.dropView
@@ -168,9 +167,19 @@ const productSlice = createSlice({
        },
        setNavSearchValue : (state,{payload}) =>{
         state.navSearchValue = payload
+        state.categoryList = []
        },
        setNavSearchAlert : (state,{payload}) =>{
         state.navSearchAlert = payload
+       },
+       setSearchFilteredItems : (state,{payload}) =>{
+        state.searchBlock = false
+        state.searchFilterBlock = true
+        state.searchFilteredItems = payload
+       },
+       setSearchBlock : (state) =>{
+        state.searchBlock = false
+        state.searchList = []
        }
     },
     extraReducers : (handler) =>{
@@ -185,6 +194,9 @@ const productSlice = createSlice({
         state.filterBlock = false
         state.searchBlock = false
         state.productError = false
+        state.searchFilterBlock = false
+        state.productSearchValue = ""
+        state.searchList = []
        })
        handler.addCase(productList.fulfilled,(state,{payload}) =>{
         state.productsList = payload
@@ -233,6 +245,7 @@ const productSlice = createSlice({
         state.searchBlock = true
         state.searchLoading = true
         state.searchError = false
+        state.searchFilterBlock = false
        })
        handler.addCase(searchProduct.fulfilled,(state,{payload})=>{
         state.searchLoading = false
@@ -252,7 +265,7 @@ const productSlice = createSlice({
 export const {productSearchClear,setDropView,navSearchClear,setOrdersError,
     setDropViewClose,setFilterMinValue,setFilterMaxValue,
     setProductSearchValue,setProductSearchAlert,setNavSearchValue,
-    setNavSearchAlert} = productSlice.actions
+    setNavSearchAlert,setSearchFilteredItems,setSearchBlock} = productSlice.actions
 
 export default productSlice.reducer
 
