@@ -12,7 +12,7 @@ function Navbar() {
 
   let {cartQuantity} = useSelector(state => state.cart.cart)
   let {categoryList,dropView,dropViewClose,navSearchValue,navSearchAlert} = useSelector(state => state.product)
-  let {isLoggedOut} = useSelector(state => state.loginDetails)
+  let {isLoggedOut,user} = useSelector(state => state.loginDetails)
 
   let dispatch = useDispatch()
   const { loadCategories,navSearchClear,setDropView,setDropViewClose,
@@ -136,9 +136,15 @@ function Navbar() {
                 <Link to="/cart" className="link"><FontAwesomeIcon icon={faCartShopping} size="2x" /></Link>
                 <div className="cart-qty text-center">{cartQuantity}</div>
                 </div>
+                {
+                  user.loginButton ?
                 <div className="log-btn-div">
                 <Link to="/login" className=" link text-white "><div className='log-btn log-div'>Login</div></Link>
                 </div>
+                : null
+
+                }
+                
                 <div className='user-icon-div me-lg-3 mt-2 mt-lg-1 pb-2' >
                 <FontAwesomeIcon className='user-icon' icon={faUser} size="2x"/>
                 <div className="user-drop shadow">

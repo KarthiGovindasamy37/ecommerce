@@ -14,7 +14,7 @@ tempLoading:false,
 tempStatus:false,
 resetLoading:false,
 resetStatus:false,
-forgotLoading:false          
+forgotLoading:false,   
 } :
 {
     isLoading:false,
@@ -30,6 +30,7 @@ forgotLoading:false
     user:{
         userName:"",
         email:"",
+        loginButton:true,
     }
 }
 
@@ -53,11 +54,12 @@ export const Login = createAsyncThunk("login/Login", async (values,{rejectWithVa
     window.localStorage.setItem("token",user.data.token)
     let userDetails = {
         userName : user.data.user.name,
-        email : user.data.user.email
+        email : user.data.user.email,
+        loginButton:false
     }
     window.localStorage.setItem("userDetails",JSON.stringify(userDetails))
     toast.success("User logged in successfully",{toastId:Math.random()})
-    return user.data.user
+    return userDetails
     }catch(error){
         toast.error(error.response.data.message,{toastId:Math.random()})
         return rejectWithValue(error.response)
@@ -121,6 +123,7 @@ const loginSlice = createSlice({
         state.user.userName = ""
         state.user.email = ""
         state.isLoggedOut = true
+        state.user.loginButton = true
         window.localStorage.removeItem("userDetails")
         window.localStorage.removeItem("token")
         }else{
@@ -141,7 +144,7 @@ const loginSlice = createSlice({
             state.isLoggedOut = false
             state.isLoggedin = true
             state.user = action.payload
-            state.isLoading = false            
+            state.isLoading = false
         })
 
         builder.addCase(Login.rejected,(state,action) =>{
